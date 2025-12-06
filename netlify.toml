@@ -1,0 +1,19 @@
+[build]
+  command = "npm run build && npm run daily-update"
+  publish = "."
+  functions = "functions"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+
+[build.processing]
+  css = { bundle = true, minify = true }
+  js = { bundle = true, minify = true }
+  html = { pretty_urls = true }
+  images = { compress = true }
+
+[context.production.environment]
+  NODE_VERSION = "18"

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>免费VPN专区 - Open Source Tools Navigation</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      color: #2d3748;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    h1 i { color: #667eea; }
+    
+    .tagline {
+      color: #718096;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+    
+    .vpn-intro {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      border-left: 4px solid #667eea;
+    }
+    
+    .vpn-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    
+    .vpn-card {
+      background: white;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 2px solid transparent;
+    }
+    
+    .vpn-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+      border-color: #667eea;
+    }
+    
+    .vpn-card h3 {
+      color: #2d3748;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .vpn-card .description {
+      color: #718096;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    
+    .vpn-card .features {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+    
+    .vpn-card .features li {
+      padding: 5px 0;
+      color: #4a5568;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .vpn-card .features li i {
+      color: #48bb78;
+    }
+    
+    .vpn-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .vpn-btn:hover {
+      background: #5a67d8;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .vpn-btn.connect {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    }
+    
+    .vpn-btn.connect:hover {
+      background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+    }
+    
+    .vpn-btn.disconnect {
+      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    }
+    
+    .vpn-btn.disconnect:hover {
+      background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+    }
+    
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .status-connected {
+      background: #c6f6d5;
+      color: #22543d;
+    }
+    
+    .status-disconnected {
+      background: #fed7d7;
+      color: #742a2a;
+    }
+    
+    .connection-status {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .connection-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .connection-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .connection-row:last-child {
+      border-bottom: none;
+    }
+    
+    .connection-label {
+      color: #718096;
+      font-weight: 500;
+    }
+    
+    .connection-value {
+      color: #2d3748;
+      font-weight: 600;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 50px;
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      margin-top: 20px;
+    }
+    
+    .back-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .server-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 20px 0;
+    }
+    
+    .server-btn {
+      background: #edf2f7;
+      border: 1px solid #cbd5e0;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    
+    .server-btn:hover {
+      background: #e2e8f0;
+      border-color: #a0aec0;
+    }
+    
+    .server-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-shield-alt"></i> 免费VPN专区</h1>
+      <p class="tagline">安全、快速、免费的VPN工具，帮助您自由访问全球开源资源</p>
+      <a href="index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> 返回工具导航
+      </a>
+    </header>
+    
+    <div class="connection-status">
+      <div class="status-header">
+        <h2>连接状态</h2>
+        <div id="status-indicator" class="status-indicator status-disconnected">
+          <i class="fas fa-circle"></i> 未连接
+        </div>
+      </div>
+      
+      <div class="connection-info">
+        <div class="connection-row">
+          <span class="connection-label">状态：</span>
+          <span id="connection-status" class="connection-value">已断开</span>
+        </div>
+        <div class="connection-row">
+          <span class="connection-label">服务器：</span>
+          <span id="server-location" class="connection-value">未选择</span>
+        </div>
+        <div class="connection-row">
+          <span class="connection-label">延迟：</span>
+          <span id="ping-time" class="connection-value">- ms</span>
+        </div>
+        <div class="connection-row">
+          <span class="connection-label">已传输：</span>
+          <span id="data-usage" class="connection-value">0 MB</span>
+        </div>
+      </div>
+      
+      <div class="server-list">
+        <button class="server-btn" data-server="us">🇺🇸 美国</button>
+        <button class="server-btn" data-server="jp">🇯🇵 日本</button>
+        <button class="server-btn" data-server="sg">🇸🇬 新加坡</button>
+        <button class="server-btn" data-server="de">🇩🇪 德国</button>
+        <button class="server-btn" data-server="hk">🇭🇰 香港</button>
+        <button class="server-btn" data-server="kr">🇰🇷 韩国</button>
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button id="connect-btn" class="vpn-btn connect">
+          <i class="fas fa-plug"></i> 连接VPN
+        </button>
+        <button id="disconnect-btn" class="vpn-btn disconnect" disabled>
+          <i class="fas fa-power-off"></i> 断开连接
+        </button>
+        <button id="refresh-btn" class="vpn-btn">
+          <i class="fas fa-sync-alt"></i> 刷新列表
+        </button>
+      </div>
+    </div>
+    
+    <div class="vpn-intro">
+      <h3><i class="fas fa-info-circle"></i> VPN使用说明</h3>
+      <p>这里提供的免费VPN工具可以帮助您访问国际开源资源，提高搜索效率。所有VPN工具均为开源项目，请遵守当地法律法规。</p>
+    </div>
+    
+    <div class="vpn-grid">
+      <!-- OpenVPN -->
+      <div class="vpn-card">
+        <h3><i class="fab fa-openvpn"></i> OpenVPN</h3>
+        <p class="description">开源的VPN协议，安全性高，跨平台支持</p>
+        <ul class="features">
+          <li><i class="fas fa-check"></i> 完全开源透明</li>
+          <li><i class="fas fa-check"></i> 军用级加密</li>
+          <li><i class="fas fa-check"></i> 多平台支持</li>
+          <li><i class="fas fa-check"></i> 社区活跃</li>
+        </ul>
+        <a href="https://openvpn.net/" target="_blank" class="vpn-btn">
+          <i class="fas fa-external-link-alt"></i> 访问官网
+        </a>
+      </div>
+      
+      <!-- WireGuard -->
+      <div class="vpn-card">
+        <h3><i class="fas fa-bolt"></i> WireGuard</h3>
+        <p class="description">现代、快速、安全的VPN协议</p>
+        <ul class="features">
+          <li><i class="fas fa-check"></i> 性能极佳</li>
+          <li><i class="fas fa-check"></i> 代码简洁</li>
+          <li><i class="fas fa-check"></i> 易于配置</li>
+          <li><i class="fas fa-check"></i> 内核集成</li>
+        </ul>
+        <a href="https://www.wireguard.com/" target="_blank" class="vpn-btn">
+          <i class="fas fa-external-link-alt"></i> 访问官网
+        </a>
+      </div>
+      
+      <!-- Outline -->
+      <div class="vpn-card">
+        <h3><i class="fas fa-shield-alt"></i> Outline</h3>
+        <p class="description">Google开发的VPN方案，访问速度快</p>
+        <ul class="features">
+          <li><i class="fas fa-check"></i> Google开发</li>
+          <li><i class="fas fa-check"></i> 易于搭建</li>
+          <li><i class="fas fa-check"></i> 访问速度快</li>
+          <li><i class="fas fa-check"></i> 免费使用</li>
+        </ul>
+        <a href="https://getoutline.org/" target="_blank" class="vpn-btn">
+          <i class="fas fa-external-link-alt"></i> 访问官网
+        </a>
+      </div>
+      
+      <!-- V2Ray -->
+      <div class="vpn-card">
+        <h3><i class="fas fa-rocket"></i> V2Ray</h3>
+        <p class="description">强大的代理工具，支持多种协议</p>
+        <ul class="features">
+          <li><i class="fas fa-check"></i> 多协议支持</li>
+          <li><i class="fas fa-check"></i> 流量伪装</li>
+          <li><i class="fas fa-check"></i> 性能优秀</li>
+          <li><i class="fas fa-check"></i> 配置灵活</li>
+        </ul>
+        <a href="https://www.v2fly.org/" target="_blank" class="vpn-btn">
+          <i class="fas fa-external-link-alt"></i> 访问官网
+        </a>
+      </div>
+      
+      <!-- Shadowsocks -->
+      <div class="vpn-card">
+        <h3><i class="fas fa-user-secret"></i> Shadowsocks</h3>
+        <p class="description">轻量级代理工具，资源占用少</p>
+        <ul class="features">
+          <li><i class="fas fa-check"></i> 轻量级</li>
+          <li><i class="fas fa-check"></i> 跨平台</li>
+          <li><i class="fas fa-check"></i> 配置简单</li>
+          <li><i class="fas fa-check"></i> 社区强大</li>
+        </ul>
+        <a href="https://shadowsocks.org/" target="_blank" class="vpn-btn">
+          <i class="fas fa-external-link-alt"></i> 访问官网
+        </a>
+      </div>
+      
+      <!-- SoftEther -->
+      <div class="vpn-card">
+        <h3><i class="fas fa-network-wired"></i> SoftEther</h3>
+        <p class="description">多功能VPN解决方案，兼容性好</p>
+        <ul class="features">
+          <li><i class="fas fa-check"></i> 多协议兼容</li>
+          <li><i class="fas fa-check"></i> 性能优异</li>
+          <li><i class="fas fa-check"></i> 企业级功能</li>
+          <li><i class="fas fa-check"></i> 完全免费</li>
+        </ul>
+        <a href="https://www.softether.org/" target="_blank" class="vpn-btn">
+          <i class="fas fa-external-link-alt"></i> 访问官网
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <footer>
+    <p>© 2025 Open Source Tools Navigation. 仅供技术研究使用，请遵守当地法律法规。</p>
+  </footer>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const statusIndicator = document.getElementById('status-indicator');
+      const connectionStatus = document.getElementById('connection-status');
+      const serverLocation = document.getElementById('server-location');
+      const pingTime = document.getElementById('ping-time');
+      const dataUsage = document.getElementById('data-usage');
+      const connectBtn = document.getElementById('connect-btn');
+      const disconnectBtn = document.getElementById('disconnect-btn');
+      const refreshBtn = document.getElementById('refresh-btn');
+      const serverBtns = document.querySelectorAll('.server-btn');
+      
+      let connected = false;
+      let selectedServer = 'us';
+      let dataTransferred = 0;
+      
+      // 服务器信息
+      const servers = {
+        us: { name: '美国', ping: 150 },
+        jp: { name: '日本', ping: 100 },
+        sg: { name: '新加坡', ping: 80 },
+        de: { name: '德国', ping: 200 },
+        hk: { name: '香港', ping: 50 },
+        kr: { name: '韩国', ping: 60 }
+      };
+      
+      // 初始化状态
+      updateStatus();
+      
+      // 服务器选择
+      serverBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          serverBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedServer = btn.dataset.server;
+          serverLocation.textContent = servers[selectedServer].name;
+          pingTime.textContent = servers[selectedServer].ping + ' ms';
+        });
+      });
+      
+      // 连接VPN
+      connectBtn.addEventListener('click', async () => {
+        try {
+          connectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 连接中...';
+          connectBtn.disabled = true;
+          
+          // 模拟连接过程
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+          connected = true;
+          updateStatus();
+          
+          // 开始模拟数据传输
+          startDataSimulation();
+          
+        } catch (error) {
+          alert('连接失败: ' + error.message);
+        } finally {
+          connectBtn.innerHTML = '<i class="fas fa-plug"></i> 连接VPN';
+          connectBtn.disabled = false;
+        }
+      });
+      
+      // 断开连接
+      disconnectBtn.addEventListener('click', () => {
+        connected = false;
+        updateStatus();
+        stopDataSimulation();
+      });
+      
+      // 刷新服务器
+      refreshBtn.addEventListener('click', () => {
+        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 刷新中...';
+        setTimeout(() => {
+          // 模拟ping测试
+          Object.keys(servers).forEach(server => {
+            servers[server].ping = Math.floor(Math.random() * 100) + 50;
+          });
+          
+          pingTime.textContent = servers[selectedServer].ping + ' ms';
+          refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> 刷新列表';
+        }, 1000);
+      });
+      
+      // 数据模拟
+      let dataInterval;
+      function startDataSimulation() {
+        dataInterval = setInterval(() => {
+          dataTransferred += 0.1 + Math.random() * 0.2;
+          dataUsage.textContent = dataTransferred.toFixed(1) + ' MB';
+        }, 1000);
+      }
+      
+      function stopDataSimulation() {
+        clearInterval(dataInterval);
+      }
+      
+      // 更新状态显示
+      function updateStatus() {
+        if (connected) {
+          statusIndicator.className = 'status-indicator status-connected';
+          statusIndicator.innerHTML = '<i class="fas fa-circle"></i> 已连接';
+          connectionStatus.textContent = '已连接';
+          connectionStatus.style.color = '#48bb78';
+          connectBtn.disabled = true;
+          disconnectBtn.disabled = false;
+        } else {
+          statusIndicator.className = 'status-indicator status-disconnected';
+          statusIndicator.innerHTML = '<i class="fas fa-circle"></i> 未连接';
+          connectionStatus.textContent = '已断开';
+          connectionStatus.style.color = '#f56565';
+          connectBtn.disabled = false;
+          disconnectBtn.disabled = true;
+        }
+      }
+      
+      // 默认选择美国服务器
+      document.querySelector(`[data-server="${selectedServer}"]`).classList.add('active');
+      serverLocation.textContent = servers[selectedServer].name;
+      pingTime.textContent = servers[selectedServer].ping + ' ms';
+    });
+    
+    // 保存状态到localStorage
+    window.addEventListener('beforeunload', () => {
+      localStorage.setItem('vpnConnected', connected);
+      localStorage.setItem('selectedServer', selectedServer);
+      localStorage.setItem('dataTransferred', dataTransferred);
+    });
+  </script>
+</body>
+</html>

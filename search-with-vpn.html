@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全网搜索 - Open Source Tools Navigation</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      color: #2d3748;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    h1 i { color: #667eea; }
+    
+    .tagline {
+      color: #718096;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+    
+    .search-section {
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .search-input {
+      flex: 1;
+      padding: 15px 20px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .search-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 0 30px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .search-btn:hover {
+      background: #5a67d8;
+      transform: translateY(-2px);
+    }
+    
+    .search-engines {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .engine-btn {
+      background: #edf2f7;
+      border: 2px solid #e2e8f0;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+    
+    .engine-btn:hover {
+      background: #e2e8f0;
+    }
+    
+    .engine-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+    
+    .engine-btn i {
+      margin-right: 5px;
+    }
+    
+    .vpn-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .vpn-banner h3 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .vpn-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: #48bb78;
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    
+    .results-container {
+      display: none;
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      margin-top: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .result-item {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .result-item:hover {
+      border-color: #667eea;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+    }
+    
+    .result-title {
+      color: #2d3748;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    
+    .result-title a {
+      color: #2d3748;
+      text-decoration: none;
+    }
+    
+    .result-title a:hover {
+      color: #667eea;
+    }
+    
+    .result-description {
+      color: #718096;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    
+    .result-url {
+      color: #667eea;
+      font-size: 0.9rem;
+      font-family: monospace;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #718096;
+    }
+    
+    .loading i {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #667eea;
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      margin-top: 20px;
+    }
+    
+    .back-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .search-stats {
+      color: #718096;
+      font-size: 0.9rem;
+      margin-top: 20px;
+    }
+    
+    .suggested-searches {
+      margin-top: 20px;
+    }
+    
+    .suggested-searches h4 {
+      color: #718096;
+      margin-bottom: 10px;
+    }
+    
+    .suggested-tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .tag {
+      background: #edf2f7;
+      padding: 5px 10px;
+      border-radius: 20px;
+      color: #4a5568;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .tag:hover {
+      background: #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-search"></i> 全网搜索</h1>
+      <p class="tagline">通过VPN加速，搜索全球开源工具和资源</p>
+      <a href="index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> 返回工具导航
+      </a>
+    </header>
+    
+    <div class="vpn-banner">
+      <h3><i class="fas fa-shield-alt"></i> VPN加速搜索</h3>
+      <div class="vpn-toggle">
+        <span id="vpn-status">VPN: 关闭</span>
+        <label class="switch">
+          <input type="checkbox" id="vpn-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+    
+    <div class="search-section">
+      <div class="search-box">
+        <input 
+          type="text" 
+          id="search-query" 
+          class="search-input" 
+          placeholder="输入您要搜索的关键词..."
+        >
+        <button id="search-button" class="search-btn">
+          <i class="fas fa-search"></i> 搜索
+        </button>
+      </div>
+      
+      <div class="search-engines">
+        <button class="engine-btn active" data-engine="github">
+          <i class="fab fa-github"></i> GitHub
+        </button>
+        <button class="engine-btn" data-engine="google">
+          <i class="fab fa-google"></i> Google
+        </button>
+        <button class="engine-btn" data-engine="stackoverflow">
+          <i class="fab fa-stack-overflow"></i> Stack Overflow
+        </button>
+        <button class="engine-btn" data-engine="npm">
+          <i class="fab fa-npm"></i> NPM
+        </button>
+        <button class="engine-btn" data-engine="docker">
+          <i class="fab fa-docker"></i> Docker Hub
+        </button>
+        <button class="engine-btn" data-engine="youtube">
+          <i class="fab fa-youtube"></i> YouTube
+        </button>
+      </div>
+      
+      <div class="suggested-searches">
+        <h4>推荐搜索：</h4>
+        <div class="suggested-tags">
+          <span class="tag" data-query="open source ai tools">开源AI工具</span>
+          <span class="tag" data-query="react framework 2024">React框架2024</span>
+          <span class="tag" data-query="free vpn open source">免费VPN开源</span>
+          <span class="tag" data-query="termux hacking tools">Termux黑客工具</span>
+          <span class="tag" data-query="docker deployment">Docker部署</span>
+          <span class="tag" data-query="python data science">Python数据科学</span>
+        </div>
+      </div>
+    </div>
+    
+    <div id="results-container" class="results-container">
+      <div id="search-loading" class="loading" style="display: none;">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>正在搜索中，请稍候...</p>
+      </div>
+      <div id="search-results"></div>
+      <div class="search-stats" id="search-stats"></div>
+    </div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchInput = document.getElementById('search-query');
+      const searchButton = document.getElementById('search-button');
+      const searchEngines = document.querySelectorAll('.engine-btn');
+      const vpnToggle = document.getElementById('vpn-toggle');
+      const vpnStatus = document.getElementById('vpn-status');
+      const resultsContainer = document.getElementById('results-container');
+      const searchLoading = document.getElementById('search-loading');
+      const searchResults = document.getElementById('search-results');
+      const searchStats = document.getElementById('search-stats');
+      const suggestedTags = document.querySelectorAll('.tag');
+      
+      let currentEngine = 'github';
+      let vpnEnabled = false;
+      let searchHistory = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+      
+      // 搜索源URL映射
+      const searchSources = {
+        github: 'https://github.com/search?q=',
+        google: 'https://www.google.com/search?q=',
+        stackoverflow: 'https://stackoverflow.com/search?q=',
+        npm: 'https://www.npmjs.com/search?q=',
+        docker: 'https://hub.docker.com/search?q=',
+        youtube: 'https://www.youtube.com/results?search_query='
+      };
+      
+      // 搜索引擎选择
+      searchEngines.forEach(engine => {
+        engine.addEventListener('click', () => {
+          searchEngines.forEach(e => e.classList.remove('active'));
+          engine.classList.add('active');
+          currentEngine = engine.dataset.engine;
+        });
+      });
+      
+      // VPN开关
+      vpnToggle.addEventListener('change', function() {
+        vpnEnabled = this.checked;
+        vpnStatus.textContent = `VPN: ${vpnEnabled ? '开启' : '关闭'}`;
+        localStorage.setItem('vpnEnabled', vpnEnabled);
+        
+        if (vpnEnabled) {
+          simulateVPNConnection();
+        }
+      });
+      
+      // 从localStorage加载VPN状态
+      const savedVPN = localStorage.getItem('vpnEnabled') === 'true';
+      vpnToggle.checked = savedVPN;
+      vpnEnabled = savedVPN;
+      vpnStatus.textContent = `VPN: ${vpnEnabled ? '开启' : '关闭'}`;
+      
+      // 搜索功能
+      searchButton.addEventListener('click', performSearch);
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          performSearch();
+        }
+      });
+      
+      // 推荐标签点击
+      suggestedTags.forEach(tag => {
+        tag.addEventListener('click', () => {
+          searchInput.value = tag.dataset.query;
+          performSearch();
+        });
+      });
+      
+      async function performSearch() {
+        const query = searchInput.value.trim();
+        if (!query) return;
+        
+        // 保存到搜索历史
+        if (!searchHistory.includes(query)) {
+          searchHistory.unshift(query);
+          searchHistory = searchHistory.slice(0, 10);
+          localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+        }
+        
+        // 显示结果容器
+        resultsContainer.style.display = 'block';
+        searchLoading.style.display = 'block';
+        searchResults.innerHTML = '';
+        searchStats.innerHTML = '';
+        
+        // 模拟搜索延迟
+        setTimeout(() => {
+          searchLoading.style.display = 'none';
+          showSearchResults(query);
+        }, 1000);
+      }
+      
+      function showSearchResults(query) {
+        const searchUrl = searchSources[currentEngine] + encodeURIComponent(query);
+        
+        // 模拟搜索结果
+        const mockResults = generateMockResults(query, currentEngine);
+        
+        searchResults.innerHTML = mockResults.map(result => `
+          <div class="result-item">
+            <h3 class="result-title">
+              <a href="${result.url}" target="_blank">${result.title}</a>
+            </h3>
+            <p class="result-description">${result.description}</p>
+            <div class="result-url">${result.url}</div>
+          </div>
+        `).join('');
+        
+        searchStats.innerHTML = `
+          <p>搜索完成！找到约 ${mockResults.length} 个结果，用时 0.5 秒</p>
+          <p>建议：<a href="${searchUrl}" target="_blank" style="color:#667eea">在${currentEngine.toUpperCase()}中打开此搜索</a></p>
+        `;
+      }
+      
+      function generateMockResults(query, engine) {
+        const baseUrl = window.location.origin;
+        const mockData = {
+          'open source ai tools': [
+            {
+              title: 'TensorFlow - 开源的机器学习平台',
+              description: '谷歌开发的深度学习框架，广泛应用于AI研究。',
+              url: `${baseUrl}/tools?category=AI`
+            },
+            {
+              title: 'PyTorch - Python机器学习库',
+              description: 'Facebook开发的AI框架，研究人员的首选。',
+              url: `${baseUrl}/tools?category=AI`
+            }
+          ],
+          'react framework 2024': [
+            {
+              title: 'Next.js 14 - React框架的未来',
+              description: '最流行的React全栈框架，支持服务端渲染。',
+              url: 'https://nextjs.org/'
+            },
+            {
+              title: 'Remix - 全栈React框架',
+              description: '专注于性能优化的React框架。',
+              url: 'https://remix.run/'
+            }
+          ],
+          'free vpn open source': [
+            {
+              title: 'OpenVPN - 开源VPN解决方案',
+              description: '企业级VPN工具，支持多种平台。',
+              url: `${baseUrl}/vpn.html`
+            },
+            {
+              title: 'WireGuard - 现代VPN协议',
+              description: '速度快、安全性高的VPN协议。',
+              url: `${baseUrl}/vpn.html`
+            }
+          ],
+          'termux hacking tools': [
+            {
+              title: 'Metasploit on Termux',
+              description: '在Android设备上运行渗透测试工具。',
+              url: `${baseUrl}/tools?category=Termux`
+            },
+            {
+              title: 'Termux Hacking Tools',
+              description: 'Termux上的安全测试工具集合。',
+              url: `${baseUrl}/tools?category=Termux`
+            }
+          ]
+        };
+        
+        if (mockData[query.toLowerCase()]) {
+          return mockData[query.toLowerCase()];
+        }
+        
+        // 默认返回结果
+        return [
+          {
+            title: `在${engine}中搜索 "${query}"`,
+            description: `点击查看${engine}的搜索结果。${vpnEnabled ? '（VPN已启用）' : ''}`,
+            url: searchSources[engine] + encodeURIComponent(query)
+          },
+          {
+            title: '开源工具导航',
+            description: '发现更多开源工具和资源。',
+            url: `${baseUrl}/index.html`
+          },
+          {
+            title: '免费VPN专区',
+            description: '获取免费的VPN工具和教程。',
+            url: `${baseUrl}/vpn.html`
+          }
+        ];
+      }
+      
+      function simulateVPNConnection() {
+        console.log('VPN连接已启用，搜索加速中...');
+        // 在实际应用中，这里会处理VPN连接逻辑
+      }
+      
+      // 显示搜索历史建议
+      if (searchHistory.length > 0) {
+        const historyDiv = document.createElement('div');
+        historyDiv.className = 'suggested-searches';
+        historyDiv.innerHTML = `
+          <h4>搜索历史：</h4>
+          <div class="suggested-tags">
+            ${searchHistory.slice(0, 5).map(term => `
+              <span class="tag" data-query="${term}">${term}</span>
+            `).join('')}
+          </div>
+        `;
+        document.querySelector('.search-section').appendChild(historyDiv);
+        
+        // 为历史标签添加事件
+        historyDiv.querySelectorAll('.tag').forEach(tag => {
+          tag.addEventListener('click', () => {
+            searchInput.value = tag.dataset.query;
+            performSearch();
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>
