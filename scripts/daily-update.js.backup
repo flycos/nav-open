@@ -1,0 +1,40 @@
+// 简化 daily-update 脚本，避免浏览器 API
+const fs = require('fs');
+const path = require('path');
+
+// 简单的更新脚本
+console.log('Starting daily update...');
+const timestamp = new Date().toISOString();
+const updateData = {
+  lastUpdated: timestamp,
+  count: 5000,
+  message: 'Daily update completed'
+};
+
+// 保存更新信息
+const toolsPath = path.join(__dirname, '../data/tools.json');
+if (fs.existsSync(toolsPath)) {
+  const toolsData = require(toolsPath);
+  toolsData.meta = {
+    ...toolsData.meta,
+    lastUpdated: timestamp,
+    version: '1.0.0'
+  };
+  
+  fs.writeFileSync(toolsPath, JSON.stringify(toolsData, null, 2));
+  console.log('Updated metadata:', timestamp);
+} else {
+  console.log('Tools data not found, creating basic structure...');
+  const basicData = {
+    meta: {
+      name: "Open Source Tools",
+      version: "1.0.0",
+      count: 0,
+      lastUpdated: timestamp
+    },
+    tools: []
+  };
+  fs.writeFileSync(toolsPath, JSON.stringify(basicData, null, 2));
+}
+
+console.log('Daily update completed successfully!');

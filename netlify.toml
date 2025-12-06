@@ -1,19 +1,31 @@
 [build]
-  command = "npm run build && npm run daily-update"
   publish = "."
-  functions = "functions"
+  command = "npm run build"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
 
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+
+[context.deploy-preview.environment]
+  NODE_ENV = "staging"
+
+[context.production.environment]
+  NODE_ENV = "production"
+
+# 插件配置
 [[plugins]]
   package = "@netlify/plugin-lighthouse"
 
 [build.processing]
-  css = { bundle = true, minify = true }
-  js = { bundle = true, minify = true }
-  html = { pretty_urls = true }
-  images = { compress = true }
-
-[context.production.environment]
-  NODE_VERSION = "18"
+  skip_processing = false
